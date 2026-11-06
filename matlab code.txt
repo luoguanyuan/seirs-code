@@ -1,0 +1,599 @@
+
+alpha = 0.5; 
+beta = 0.5; 
+gamma = 0.2; 
+mu = 0.1; 
+epsilon = 0.05; 
+eta = 0.05; 
+delta = 0.1; 
+
+
+S0 = 0.99; 
+E0 = 0.01;  
+I0 = 0;   
+R0 = 0;   
+initial_conditions = [S0, E0, I0, R0];
+
+
+tspan = [0 100];
+
+
+[t, y] = ode45(@(t, y) seirs_ode(t, y, alpha, beta, gamma, mu, epsilon, eta, delta), tspan, initial_conditions);
+
+
+S = y(:, 1);
+E = y(:, 2);
+I = y(:, 3);
+R = y(:, 4);
+
+
+fig = figure('Color','w');
+layout = tiledlayout(fig,1,1,'TileSpacing','loose','Padding','loose');
+nexttile(layout);
+plot(t, S, '-', 'DisplayName', 'S(T): Susceptible');
+hold on;
+plot(t, E, '-', 'DisplayName', 'E(T): Exposed');
+plot(t, I, '-', 'DisplayName', 'I(T): Infected');
+plot(t, R, '-', 'DisplayName', 'R(T): Recovered');
+xlabel('T');
+ylabel('S(T), E(T), I(T), R(T)');
+
+legend show;
+grid on;
+
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+
+
+format_export(fig,layout,'Fig3');
+
+
+function dSEIRdt = seirs_ode(t, y, alpha, beta, gamma, mu, epsilon, eta, delta)
+    S = y(1);
+    E = y(2);
+    I = y(3);
+    R = y(4);
+
+    dSdt = -alpha * S*I + eta * E + epsilon * I + mu * R;
+    dEdt = alpha * S*I - beta * E - eta * E - delta * E;
+    dIdt = beta * E - epsilon * I - gamma * I;
+    dRdt = delta * E + gamma * I - mu * R;
+
+    dSEIRdt = [dSdt; dEdt; dIdt; dRdt];
+end
+
+————————————————————————————————————————————————————————
+
+alpha = 0.45;
+beta = 0.45; 
+gamma = 0.25; 
+mu = 0.05; 
+epsilon = 0.15; 
+eta = 0.1; 
+delta = 0.1;
+
+
+S0 = 0.99; 
+E0 = 0.01;   
+I0 = 0;   
+R0 = 0;   
+initial_conditions = [S0, E0, I0, R0];
+
+
+tspan = [0 100];
+
+
+[t, y] = ode45(@(t, y) seirs_ode(t, y, alpha, beta, gamma, mu, epsilon, eta, delta), tspan, initial_conditions);
+
+
+S = y(:, 1);
+E = y(:, 2);
+I = y(:, 3);
+R = y(:, 4);
+
+
+fig = figure('Color','w');
+layout = tiledlayout(fig,1,1,'TileSpacing','loose','Padding','loose');
+nexttile(layout);
+plot(t, S, '-', 'DisplayName', 'S(T): Susceptible');
+hold on;
+plot(t, E, '-', 'DisplayName', 'E(T): Exposed');
+plot(t, I, '-', 'DisplayName', 'I(T): Infected');
+plot(t, R, '-', 'DisplayName', 'R(T): Recovered');
+xlabel('T');
+ylabel('S(T), E(T), I(T), R(T)');
+
+legend show;
+grid on;
+   
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+
+
+format_export(fig,layout,'Fig4');
+
+
+function dSEIRdt = seirs_ode(t, y, alpha, beta, gamma, mu, epsilon, eta, delta)
+    S = y(1);
+    E = y(2);
+    I = y(3);
+    R = y(4);
+
+    dSdt = -alpha * S*I + eta * E + epsilon * I + mu * R;
+    dEdt = alpha * S*I - beta * E - eta * E - delta * E;
+    dIdt = beta * E - epsilon * I - gamma * I;
+    dRdt = delta * E + gamma * I - mu * R;
+
+    dSEIRdt = [dSdt; dEdt; dIdt; dRdt];
+end
+
+————————————————————————————————————————————————
+
+beta = 0.45; 
+gamma = 0.25; 
+mu = 0.05; 
+epsilon = 0.15;
+eta = 0.1; 
+delta = 0.1; 
+
+
+S0 = 0.99; 
+E0 = 0.01;   
+I0 = 0;  
+R0 = 0;   
+initial_conditions = [S0, E0, I0, R0];
+
+
+tspan = [0 100];
+
+
+alpha_values = [0.1, 0.45, 0.7, 0.9];
+
+
+fig = figure('Color','w');
+layout = tiledlayout(fig,2,2,'TileSpacing','loose','Padding','loose');
+
+
+for i = 1:length(alpha_values)
+    alpha = alpha_values(i); 
+    
+
+    [t, y] = ode45(@(t, y) seirs_ode(t, y, alpha, beta, gamma, mu, epsilon, eta, delta), tspan, initial_conditions);
+    
+ 
+    S = y(:, 1);
+    E = y(:, 2);
+    I = y(:, 3);
+    R = y(:, 4);
+    
+
+    nexttile(layout, 1);
+    plot(t, S, 'DisplayName', ['\alpha = ', num2str(alpha)]);
+    hold on;
+    xlabel('T');
+    ylabel('S(T)');
+    legend show;
+    grid on;
+ 
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+    
+
+    nexttile(layout, 2);
+    plot(t, E, 'DisplayName', ['\alpha = ', num2str(alpha)]);
+    hold on;
+    xlabel('T');
+    ylabel('E(T)');
+    legend show;
+    grid on;
+  
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+    
+ 
+    nexttile(layout, 3);
+    plot(t, I, 'DisplayName', ['\alpha = ', num2str(alpha)]);
+    hold on;
+    xlabel('T');
+    ylabel('I(T)');
+    legend show;
+    grid on;
+ 
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+    
+  
+    nexttile(layout, 4);
+    plot(t, R, 'DisplayName', ['\alpha = ', num2str(alpha)]);
+    hold on;
+    xlabel('T');
+    ylabel('R(T)');
+    legend show;
+    grid on;
+  
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+end
+
+
+format_export(fig,layout,'Fig5_alpha');
+
+
+function dSEIRdt = seirs_ode(t, y, alpha, beta, gamma, mu, epsilon, eta, delta)
+    S = y(1);
+    E = y(2);
+    I = y(3);
+    R = y(4);
+    dSdt = -alpha * S*I + eta * E + epsilon * I + mu * R;
+    dEdt = alpha * S*I - beta * E - eta * E - delta * E;
+    dIdt = beta * E - epsilon * I - gamma * I;
+    dRdt = delta * E + gamma * I - mu * R;
+
+    dSEIRdt = [dSdt; dEdt; dIdt; dRdt];
+end
+—————————————————————————————————————————————
+
+alpha = 0.45;
+gamma = 0.25; 
+mu = 0.05; 
+epsilon = 0.15; 
+eta = 0.1; 
+delta = 0.1; 
+
+
+S0 = 0.99; 
+E0 = 0.01; 
+I0 = 0; 
+R0 = 0; 
+initial_conditions = [S0, E0, I0, R0];
+
+
+tspan = [0 100];
+
+
+beta_values = [0.1, 0.45, 0.7, 0.9];
+
+
+fig = figure('Color','w');
+layout = tiledlayout(fig,2,2,'TileSpacing','loose','Padding','loose');
+
+
+for i = 1:length(beta_values)
+    beta = beta_values(i); 
+    
+
+    [t, y] = ode45(@(t, y) seirs_ode(t, y, alpha, beta, gamma, mu, epsilon, eta, delta), tspan, initial_conditions);
+    
+
+    S = y(:, 1);
+    E = y(:, 2);
+    I = y(:, 3);
+    R = y(:, 4);
+    
+
+    nexttile(layout, 1);
+    plot(t, S, 'DisplayName', ['\beta = ', num2str(beta)]);
+    hold on;
+    xlabel('T');
+    ylabel('S(T)');
+    legend show;
+    grid on;
+   
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+    
+
+    nexttile(layout, 2);
+    plot(t, E, 'DisplayName', ['\beta = ', num2str(beta)]);
+    hold on;
+    xlabel('T');
+    ylabel('E(T)');
+    legend show;
+    grid on;
+ 
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+    
+
+    nexttile(layout, 3);
+    plot(t, I, 'DisplayName', ['\beta = ', num2str(beta)]);
+    hold on;
+    xlabel('T');
+    ylabel('I(T)');
+    legend show;
+    grid on;
+
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+    
+ 
+    nexttile(layout, 4);
+    plot(t, R, 'DisplayName', ['\beta = ', num2str(beta)]);
+    hold on;
+    xlabel('T');
+    ylabel('R(T)');
+    legend show;
+    grid on;
+
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+end
+
+
+format_export(fig,layout,'Fig6_beta');
+
+
+function dSEIRdt = seirs_ode(t, y, alpha, beta, gamma, mu, epsilon, eta, delta)
+    S = y(1);
+    E = y(2);
+    I = y(3);
+    R = y(4);
+
+    dSdt = -alpha * S * I + eta * E + epsilon * I + mu * R;
+    dEdt = alpha * S * I - beta * E - eta * E - delta * E;
+    dIdt = beta * E - epsilon * I - gamma * I;
+    dRdt = delta * E + gamma * I - mu * R;
+    dSEIRdt = [dSdt; dEdt; dIdt; dRdt];
+end
+————————————————————————————————————————————
+
+alpha = 0.45; 
+beta = 0.45; 
+mu = 0.05; 
+epsilon = 0.15; 
+eta = 0.1; 
+delta = 0.1; 
+
+
+S0 = 0.99; 
+E0 = 0.01; 
+I0 = 0; 
+R0 = 0; 
+initial_conditions = [S0, E0, I0, R0];
+
+
+tspan = [0 100];
+
+
+gamma_values = [0.1, 0.25, 0.7, 0.9];
+
+
+fig = figure('Color','w');
+layout = tiledlayout(fig,2,2,'TileSpacing','loose','Padding','loose');
+
+
+for i = 1:length(gamma_values)
+    gamma = gamma_values(i);
+    
+
+    [t, y] = ode45(@(t, y) seirs_ode(t, y, alpha, beta, gamma, mu, epsilon, eta, delta), tspan, initial_conditions);
+    
+
+    S = y(:, 1);
+    E = y(:, 2);
+    I = y(:, 3);
+    R = y(:, 4);
+    
+  
+    nexttile(layout, 1);
+    plot(t, S, 'DisplayName', ['\gamma = ', num2str(gamma)]);
+    hold on;
+    xlabel('T');
+    ylabel('S(T)');
+    legend show;
+    grid on;
+ 
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+    
+
+    nexttile(layout, 2);
+    plot(t, E, 'DisplayName', ['\gamma = ', num2str(gamma)]);
+    hold on;
+    xlabel('T');
+    ylabel('E(T)');
+    legend show;
+    grid on;
+  
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+    
+
+    nexttile(layout, 3);
+    plot(t, I, 'DisplayName', ['\gamma = ', num2str(gamma)]);
+    hold on;
+    xlabel('T');
+    ylabel('I(T)');
+    legend show;
+    grid on;
+
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+    
+
+    nexttile(layout, 4);
+    plot(t, R, 'DisplayName', ['\gamma = ', num2str(gamma)]);
+    hold on;
+    xlabel('T');
+    ylabel('R(T)');
+    legend show;
+    grid on;
+
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+end
+
+
+format_export(fig,layout,'Fig7_gamma');
+
+
+function dSEIRdt = seirs_ode(t, y, alpha, beta, gamma, mu, epsilon, eta, delta)
+    S = y(1);
+    E = y(2);
+    I = y(3);
+    R = y(4);
+
+    dSdt = -alpha * S * I + eta * E + epsilon * I + mu * R;
+    dEdt = alpha * S * I - beta * E - eta * E - delta * E;
+    dIdt = beta * E - epsilon * I - gamma * I;
+    dRdt = delta * E + gamma * I - mu * R;
+    dSEIRdt = [dSdt; dEdt; dIdt; dRdt];
+end
+——————————————————————————————————————————
+
+alpha = 0.45; 
+beta = 0.45; 
+gamma = 0.25; 
+epsilon = 0.15; 
+eta = 0.1; 
+delta = 0.1; 
+
+
+S0 = 0.99; 
+E0 = 0.01; 
+I0 = 0; 
+R0 = 0; 
+initial_conditions = [S0, E0, I0, R0];
+
+
+tspan = [0 100];
+
+
+mu_values = [0.05, 0.3, 0.7, 0.9];
+
+
+fig = figure('Color','w');
+layout = tiledlayout(fig,2,2,'TileSpacing','loose','Padding','loose');
+
+
+for i = 1:length(mu_values)
+    mu = mu_values(i); 
+    
+
+    [t, y] = ode45(@(t, y) seirs_ode(t, y, alpha, beta, gamma, mu, epsilon, eta, delta), tspan, initial_conditions);
+    
+   
+    S = y(:, 1);
+    E = y(:, 2);
+    I = y(:, 3);
+    R = y(:, 4);
+    
+
+    nexttile(layout, 1);
+    plot(t, S, 'DisplayName', ['\mu = ', num2str(mu)]);
+    hold on;
+    xlabel('T');
+    ylabel('S(T)');
+    legend show;
+    grid on;
+  
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+    
+
+    nexttile(layout, 2);
+    plot(t, E, 'DisplayName', ['\mu = ', num2str(mu)]);
+    hold on;
+    xlabel('T');
+    ylabel('E(T)');
+    legend show;
+    grid on;
+   
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+    
+
+    nexttile(layout, 3);
+    plot(t, I, 'DisplayName', ['\mu = ', num2str(mu)]);
+    hold on;
+    xlabel('T');
+    ylabel('I(T)');
+    legend show;
+    grid on;
+  
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+    
+
+    nexttile(layout, 4);
+    plot(t, R, 'DisplayName', ['\mu = ', num2str(mu)]);
+    hold on;
+    xlabel('T');
+    ylabel('R(T)');
+    legend show;
+    grid on;
+ 
+    ylim('auto');
+    yticks('auto');
+    ytickformat('%.3f');
+    ax = gca;
+    ax.YAxis.Exponent = 0;
+end
+
+
+format_export(fig,layout,'Fig8_mu');
+
+
+function dSEIRdt = seirs_ode(t, y, alpha, beta, gamma, mu, epsilon, eta, delta)
+    S = y(1);
+    E = y(2);
+    I = y(3);
+    R = y(4);
+
+    dSdt = -alpha * S * I + eta * E + epsilon * I + mu * R;
+    dEdt = alpha * S * I - beta * E - eta * E - delta * E;
+    dIdt = beta * E - epsilon * I - gamma * I;
+    dRdt = delta * E + gamma * I - mu * R;
+    dSEIRdt = [dSdt; dEdt; dIdt; dRdt];
+end
